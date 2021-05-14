@@ -1,19 +1,63 @@
-plugins {
-    id 'java'
+buildscript {
+    repositories {
+        jcenter()
+    }
 }
 
-group 'org.example'
-version '1.0-SNAPSHOT'
+plugins {
+    id 'java'
+    id 'groovy'
+    id 'idea'
+    id 'signing'
+    id 'maven-publish'
+}
+
+apply from: "${gradle.gradleDir}/coverage.gradle"
+apply from: "${gradle.gradleDir}/publish.gradle"
+
+wrapper {
+    gradleVersion = '6.8.3'
+}
+
+group 'org.raistlic'
+version '2.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+    compile "org.slf4j:slf4j-api:1.7.5"
+    compile "com.fasterxml.jackson.core:jackson-databind:2.6.2"
+    compile "com.esotericsoftware.yamlbeans:yamlbeans:1.09"
+
+    testCompile "junit:junit:4.12"
+    testCompile "org.codehaus.groovy:groovy-all:2.4.1"
+    testCompile "org.spockframework:spock-core:1.0-groovy-2.4"
+    testCompile "org.mockito:mockito-all:1.9.5"
+    // only necessary if Hamcrest matchers are used
+    testCompile "org.hamcrest:hamcrest-core:1.3"
+    // allows mocking of classes (in addition to interfaces)
+    testRuntime "cglib:cglib-nodep:3.1"
+    // allows mocking of classes without default constructor (together with CGLIB)
+    testRuntime "org.objenesis:objenesis:2.1"
+    // allows mocking of classes without default constructor (together with CGLIB)
+    testRuntime "pl.pragmatists:JUnitParams:1.0.4"
 }
 
 test {
     useJUnitPlatform()
+}
+
+// ---------------------------------------------------------------------------------------------------------------------
+//  for gradle tasks encoding on Windows machine
+// ---------------------------------------------------------------------------------------------------------------------
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+tasks.withType(Javadoc) {
+    options.encoding = 'UTF-8'
+    options.locale = 'en_US'
 }

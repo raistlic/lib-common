@@ -1,2 +1,3 @@
 rootProject.name = 'lib-common'
 
+gradle.ext.gradleDir = "${rootProject.projectDir}/gradle"
